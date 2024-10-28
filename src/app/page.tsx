@@ -1,12 +1,6 @@
-"use client";
+import { redirect } from "next/navigation";
+
 export default function Home() {
-	return (
-		<>
-			Hlekajlkef
-			<details>
-				<summary>Hello Ma friend</summary>
-				{`Can't even say my name`}
-			</details>
-		</>
-	);
+	redirect("/dashboard/");
+	return 0;
 }

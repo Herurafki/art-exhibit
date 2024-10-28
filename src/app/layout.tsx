@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { geistSans, geistMono } from "@/fonts/font";
-import Navbar from "@/components/custom/navbar";
-import RootFooter from "@/components/custom/footer";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -15,15 +13,14 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html
+			lang="en"
+			className="bg-gradient-to-br from-black from-30% via-blue-950 via-70% to-blue-800 h-screen w-screen bg-fixed overflow-auto text-white flex"
+		>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-black from-30% via-blue-950 via-70% to-blue-800 h-screen w-screen text-white flex`}
+				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<main>
-					<Navbar />
-					{children}
-				</main>
-				<RootFooter />
+				{children}
 			</body>
 		</html>
 	);

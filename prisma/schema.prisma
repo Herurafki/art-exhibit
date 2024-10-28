@@ -13,10 +13,115 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int    @id @default(autoincrement())
-  role       String @db.VarChar(255)
-  first_name String @db.VarChar(255)
-  last_name  String @db.VarChar(255)
-  email      String @db.VarChar(255)
+model Pengguna {
+  id               String         @id @default(cuid())
+  peran            String
+  nama             String
+  email            String
+  kata_sandi       String
+  no_telepon       BigInt
+  dibuat_pada      DateTime       @default(now())
+  diperbarui_pada  DateTime       @updatedAt
+  type             TypePengguna   @default(NORMAL)
+  profil_seniman   ProfilSeniman? @relation(fields: [profil_SenimanId], references: [id])
+  profil_SenimanId String?
+  Transaksi        Transaksi[]
+  Ulasan           Ulasan[]
+  pesan_dikirim    Pesan[]        @relation("pengirim")
+  pesan_diterima   Pesan[]        @relation("penerima")
+}
+
+model ProfilSeniman {
+  id         String      @id @default(cuid())
+  nama       String
+  biografi   String
+  deskripsi  String
+  dibuat     DateTime    @default(now())
+  diperbarui DateTime    @updatedAt
+  Pengguna   Pengguna[]
+  KaryaSeni  KaryaSeni[] @relation("main_artist")
+  Collab     KaryaSeni[] @relation("collab_artist")
+}
+
+enum TypePengguna {
+  NORMAL
+  ARTIST
+  ADMIN
+}
+
+model KaryaSeni {
+  id               String          @id @default(cuid())
+  judul            String
+  deskripsi        String
+  harga            Decimal
+  gambar_url       String
+  status           Status          @default(KOSONG)
+  Profil_Seniman   ProfilSeniman?  @relation("main_artist", fields: [profil_SenimanId], references: [id])
+  Seniman_tambahan ProfilSeniman[] @relation("collab_artist")
+  profil_SenimanId String?
+  Transaksi        Transaksi[]
+  Ulasan           Ulasan[]
+}
+
+enum Status {
+  TERSEDIA
+  TERJUAL
+  LELANG
+  KOSONG
+}
+
+model Transaksi {
+  id                String          @id @default(cuid())
+  pengguna          Pengguna        @relation(fields: [penggunaId], references: [id])
+  penggunaId        String
+  karyaSeni         KaryaSeni       @relation(fields: [karyaSeniId], references: [id])
+  karyaSeniId       String
+  tanggal_transaksi DateTime        @default(now())
+  total             Decimal
+  status            StatusTransaksi
+}
+
+enum StatusTransaksi {
+  TERDUNDA
+  SELESAI
+  GAGAL
+}
+
+model Tawaran {
+  id String @id @default(cuid())
+}
+
+model Lelang {
+  id          String       @id @default(cuid())
+  waktu_mulai DateTime
+  waktu_akhir DateTime?
+  harga_awal  Decimal
+  status      StatusLelang
+}
+
+enum StatusLelang {
+  BERLANGSUNG
+  SELESAI
+  DIBATALKAN
+}
+
+model Ulasan {
+  id          String    @id @default(cuid())
+  karya_seni  KaryaSeni @relation(fields: [karyaSeniId], references: [id])
+  karyaSeniId String
+  pengguna    Pengguna  @relation(fields: [penggunaId], references: [id])
+  penggunaId  String
+  rating      Int
+  Komentar    String
+  dibuat      DateTime  @default(now())
+}
+
+model Pesan {
+  id           String   @id @default(cuid())
+  pengirim     Pengguna @relation("pengirim", fields: [pengirimId], references: [id])
+  pengirimId   String
+  penerima     Pengguna @relation("penerima", fields: [penerimaId], references: [id])
+  penerimaId   String
+  isi_pesan    String
+  dikirim_pada DateTime @default(now())
 }

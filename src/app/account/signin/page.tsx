@@ -20,7 +20,10 @@ export default function ProfileSignInPage() {
 						</Link>
 					</p>
 					<div className="mt-5 ">
-						<Link href={""} className="hover:text-red-500 duration-300">
+						<Link
+							href={""}
+							className="hover:text-red-500 duration-300 text-blue-300"
+						>
 							Forget Password{" "}
 						</Link>
 					</div>

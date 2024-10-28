@@ -15,23 +15,23 @@ type navType = {
 const navItem: navType[] = [
 	{
 		navtxt: "Home",
-		href: "/",
+		href: "/dashboard",
 	},
 	{
 		navtxt: "About",
-		href: "/about",
+		href: "/dashboard/about",
 	},
 	{
 		navtxt: "More",
-		href: "/more",
+		href: "/dashboard/more",
 	},
 	{
 		navtxt: "Contact",
-		href: "/contact",
+		href: "/dashboard/contact",
 	},
 	{
 		navtxt: "Trending",
-		href: "/trending",
+		href: "/dashboard/trending",
 	},
 ];
 
@@ -72,9 +72,6 @@ export default function Navbar() {
 		<nav
 			className={clsx(
 				"flex pt-10 pb-2 px-3 border-b-2 border-white sticky top-0 w-screen z-10",
-				{
-					hidden: route === "/account/signup" || route === "/account/signin",
-				},
 			)}
 		>
 			<h1 className="text-4xl text-white m-4 font-semibold cursor-default">
