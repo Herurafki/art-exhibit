@@ -15,11 +15,11 @@ datasource db {
 
 model Pengguna {
   id               String         @id @default(cuid())
-  peran            String
+  peran            Peran          @default(PELANGGAN)
   nama             String
-  email            String
+  email            String         @unique
   kata_sandi       String
-  no_telepon       BigInt
+  no_telepon       BigInt?
   dibuat_pada      DateTime       @default(now())
   diperbarui_pada  DateTime       @updatedAt
   type             TypePengguna   @default(NORMAL)
@@ -29,6 +29,12 @@ model Pengguna {
   Ulasan           Ulasan[]
   pesan_dikirim    Pesan[]        @relation("pengirim")
   pesan_diterima   Pesan[]        @relation("penerima")
+}
+
+enum Peran {
+  SENIMAN
+  PELANGGAN
+  ADMIN
 }
 
 model ProfilSeniman {
