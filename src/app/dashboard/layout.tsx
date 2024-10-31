@@ -3,7 +3,7 @@ import Navbar from "@/components/custom/navbar";
 
 export default function DashboardLayout({
 	children,
-}: { children: React.ReactNode }) {
+}: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<section>
 			<Navbar />

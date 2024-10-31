@@ -40,12 +40,8 @@ export default function Navbar() {
 	const [position, setPosotion] = useState(0);
 	const [width, setWidth] = useState(0);
 	const [opacity, setOpacity] = useState(0);
+	const [duration, setDuration] = useState(0);
 	const navli = useRef<(HTMLLIElement | null)[]>([]);
-
-	const initIndex = navItem.findIndex((nav) => nav.href === route);
-	const initLi = navli.current[initIndex];
-	const initPosition = initLi?.offsetLeft ?? 0;
-	const initWidth = initLi?.offsetWidth ?? 0;
 
 	useEffect(() => {
 		const activeIndex = navItem.findIndex((nav) => nav.href === route);
@@ -65,13 +61,17 @@ export default function Navbar() {
 			left: position,
 			opacity: opacity,
 			width: width,
-			transition: { duration: 0.3 },
+			transition: { duration: duration },
 		},
 	};
+	const clickHandler = () => {
+		setDuration(0.3);
+	};
+
 	return (
 		<nav
 			className={clsx(
-				"flex pt-10 pb-2 px-3 border-b-2 border-white sticky top-0 w-screen z-10",
+				"flex pt-10 pb-2 px-3 border-b-2 border-white sticky top-0 w-screen z-10 bg-slate-950",
 			)}
 		>
 			<h1 className="text-4xl text-white m-4 font-semibold cursor-default">
@@ -79,13 +79,16 @@ export default function Navbar() {
 			</h1>
 			{/* Divider */}
 			<div className="w-0.5 my-1 mx-5 bg-white" />
-			<ul className="flex relative mx-5 items-center">
+			<ul
+				className="flex relative mx-5 items-center"
+				onMouseEnter={clickHandler}
+			>
 				<motion.div
 					// Navbar Cursor
 					variants={sliderVariants}
 					animate={"slider"}
+					initial={"slider"}
 					key={"Navbar Cursor"}
-					style={{ left: initPosition, opacity: opacity, width: initWidth }}
 					className={"absolute h-12 bg-blue-100 z-[1] rounded"}
 				/>
 				{navItem.map((nav, index) => {
