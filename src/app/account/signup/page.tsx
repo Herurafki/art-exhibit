@@ -5,7 +5,8 @@ import { Checkbox } from "@nextui-org/checkbox";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { SignUp } from "../action";
+import { IsEmailTaken, SignUp } from "../action";
+import { useDebouncedCallback } from "use-debounce";
 
 export type Register = {
 	name: string;
@@ -16,13 +17,27 @@ export type Register = {
 	agreement: boolean;
 };
 
-function Submit(data: Register) {
-	SignUp(data);
-}
-
 export default function ProfileSignUpPage() {
 	const [password, setPassword] = useState<string>("");
+	const [isTaken, setTaken] = useState(false);
 	const form = useForm<Register>({});
+	const [isChecked, setIsChecked] = useState(false);
+	const [termReminder, setTermReminder] = useState(false);
+	async function Submit(data: Register) {
+		if (isChecked) {
+			await SignUp(data);
+		}
+		if (!isChecked) {
+			setTermReminder(true);
+		}
+	}
+
+	const emailCallback = useDebouncedCallback(async (input) => {
+		const isTaken = await IsEmailTaken(input);
+		setTaken(isTaken);
+		console.log(isTaken, input);
+	}, 500);
+
 	return (
 		<section className="flex flex-col justify-center items-center w-screen h-screen overflow-scroll">
 			<h1 className="text-5xl m-4 text-white font-semibold cursor-default">
@@ -36,7 +51,7 @@ export default function ProfileSignUpPage() {
 				onSubmit={form.handleSubmit(Submit)}
 			>
 				<Input
-					{...form.register("name")}
+					{...form.register("name", { required: true })}
 					isRequired
 					type="text"
 					label="Name"
@@ -51,8 +66,11 @@ export default function ProfileSignUpPage() {
 						}
 					}}
 				/>
+				{form.formState.errors.name && (
+					<p className="text-red-500">{form.formState.errors.name.message}</p>
+				)}
 				<Input
-					{...form.register("email")}
+					{...form.register("email", { required: true })}
 					isRequired
 					validationBehavior="native"
 					errorMessage={(result) => {
@@ -68,6 +86,15 @@ export default function ProfileSignUpPage() {
 					}}
 					type="email"
 					label="Email"
+					validate={() => {
+						if (isTaken) {
+							return "Email has been used";
+						}
+						return true;
+					}}
+					onChange={(e) => {
+						emailCallback(e.target.value.toLowerCase());
+					}}
 				/>
 
 				<Input
@@ -87,7 +114,7 @@ export default function ProfileSignUpPage() {
 					label="Phone Number"
 				/>
 				<Input
-					{...form.register("password")}
+					{...form.register("password", { required: true })}
 					type="password"
 					label="Password"
 					validationBehavior="native"
@@ -117,15 +144,24 @@ export default function ProfileSignUpPage() {
 						return true;
 					}}
 				/>
-				<Checkbox
-					{...form.register("agreement")}
-					color="primary"
-					radius="md"
-					isRequired
-				>
-					<span className="text-white">Agreement Term and Service</span>
-				</Checkbox>
-
+				<div>
+					<Checkbox
+						{...form.register("agreement", { required: true })}
+						color="primary"
+						radius="md"
+						onValueChange={(value) => {
+							setIsChecked(value);
+							setTermReminder(!value);
+						}}
+					>
+						<span className="text-white">Agreement Term and Service</span>
+					</Checkbox>
+					{termReminder && (
+						<p className="text-red-500">
+							Agreement Term and Service must be checked
+						</p>
+					)}
+				</div>
 				<div className="flex justify-end">
 					<div className="w-full">
 						Already Have Account try to{" "}

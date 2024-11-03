@@ -29,7 +29,7 @@ model Pengguna {
   Ulasan           Ulasan[]
   pesan_dikirim    Pesan[]        @relation("pengirim")
   pesan_diterima   Pesan[]        @relation("penerima")
-  login_token      String?
+  login_token      String?        @unique
 }
 
 enum Peran {

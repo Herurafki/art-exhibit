@@ -1,15 +1,47 @@
 "use client";
-import { LogOut } from "@/app/userValidation";
+import { IsLogin, LogOut, UserProfile } from "@/app/account/action";
+import PersonIcon from "@/icons/person";
+import type { $Enums } from "@prisma/client";
 import clsx from "clsx";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function MyDropdown({ children }: { children: ReactNode }) {
+type profileData = {
+	peran: $Enums.Peran;
+	nama: string;
+	email: string;
+	type: $Enums.TypePengguna;
+};
+
+export default function ProfileDropdown() {
 	const dropdownItem = useRef<HTMLDivElement>(null);
+	const [profile, setProfile] = useState<profileData>({
+		nama: "",
+		email: "",
+		peran: "PELANGGAN",
+		type: "NORMAL",
+	});
 	const handler = () => {
 		if (!dropdownItem.current?.focus()) {
 		}
 		dropdownItem.current?.focus();
 	};
+
+	useEffect(() => {
+		const getProfile = async () => {
+			const token = await IsLogin();
+			const profileData = await UserProfile(token || "");
+
+			setProfile(
+				profileData || {
+					nama: "",
+					email: "",
+					peran: "PELANGGAN",
+					type: "NORMAL",
+				},
+			);
+		};
+		getProfile();
+	}, []);
 
 	return (
 		<div className="relative group">
@@ -26,7 +58,7 @@ export default function MyDropdown({ children }: { children: ReactNode }) {
 						"rounded-full size-10 absolute bg-transparent group-focus-within:hidden",
 					)}
 				/>
-				<span className="*:size-7 fill-slate-700">{children}</span>
+				<span className="*:size-7 fill-slate-700">{<PersonIcon />}</span>
 			</div>
 			<div
 				// Dropdown Menu
@@ -42,8 +74,10 @@ export default function MyDropdown({ children }: { children: ReactNode }) {
 						"flex flex-col cursor-pointer *:rounded-xl items-start absolute top-1 p-3 right-0 *:text-sm hover:*:bg-blue-900 *:duration-300 *:p-3 space-y-2 p- w-52 duration-300 bg-blue-950 rounded-[0.5rem] *:w-full *:text-start"
 					}
 				>
-					<div>Stranger@gg.com</div>
-					<div>My Profile</div>
+					<div>{profile.email}</div>
+					<div>{profile.nama}</div>
+					<div>{profile.peran}</div>
+					<div>{profile.type}</div>
 					<div>Bookmark</div>
 					<div>Notification</div>
 					<div
@@ -51,7 +85,6 @@ export default function MyDropdown({ children }: { children: ReactNode }) {
 						onKeyDown={() => {}}
 						onClick={() => {
 							LogOut();
-							window.location.replace("/");
 						}}
 					>
 						Log Out

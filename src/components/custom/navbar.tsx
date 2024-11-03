@@ -51,7 +51,6 @@ export default function Navbar() {
 		const opac = navItem.find((n) => n.href === route) ? 1 : 0;
 		setOpacity(opac);
 	}, [route]);
-
 	type animationVariant = {
 		[index: string]: Variant;
 	};

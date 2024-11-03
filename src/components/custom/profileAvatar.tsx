@@ -1,35 +1,18 @@
 "use client";
-import PersonIcon from "@/icons/person";
 import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
-import MyDropdown from "./dropdown";
-import { IsLogin, Login } from "@/app/userValidation";
+import ProfileDropdown from "./profileDropdown";
+import { IsLogin } from "@/app/account/action";
 
-const login: ReactNode = (
-	<MyDropdown>
-		<PersonIcon />
-	</MyDropdown>
-);
+const login: ReactNode = <ProfileDropdown />;
 const notLogin: ReactNode = (
-	<div className="relative flex justify-end px-3 items-center space-x-3">
-		<Link
-			href={"/account/signin"}
-			key={"SignIn"}
-			className="hover:bg-blue-50 hover:text-black transition-all duration-300 rounded py-2 px-4"
-		>
-			{"Login / Sign Up"}
-		</Link>
-		<button
-			className="bg-red-700 h-7"
-			type="button"
-			onClick={() => {
-				Login();
-				window.location.replace("/");
-			}}
-		>
-			Login
-		</button>
-	</div>
+	<Link
+		href={"/account/signin"}
+		key={"SignIn"}
+		className="hover:bg-blue-50 hover:text-black transition-all duration-300 rounded py-2 px-4"
+	>
+		{"Login / Sign Up"}
+	</Link>
 );
 export default function ProfileAvatar() {
 	const [profileState, setProfile] = useState<ReactNode>(notLogin);

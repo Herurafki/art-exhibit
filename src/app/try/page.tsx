@@ -1,57 +1,36 @@
-import { PrismaClient } from "@prisma/client";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
-const prisma = new PrismaClient();
+export default function Input() {
+	const [text, setText] = useState("Hello");
+	const [value] = useDebounce(text, 1000);
+	const [count, setCount] = useState("");
+	const [counts] = useDebounce(count, 1000);
 
-export default function Try() {
-	const user = registerUser(prisma, {
-		name: "rahman",
-		email: "Ayam2",
-		password: "Hebatnyaanaku",
-	});
-	console.log(user);
-	return <>gugugaga</>;
-}
+	useEffect(() => {
+		console.log(value);
+	}, [value]);
 
-async function registerUser(
-	prisma: PrismaClient,
-	userInput: {
-		name: string;
-		email: string;
-		password: string;
-	},
-) {
-	const { name, email, password } = userInput;
-
-	// Validate input
-	if (!name || !email || !password) {
-		throw new Error("Please provide all required fields");
-	}
-
-	if (password.length < 8) {
-		throw new Error("Password must be at least 8 characters long");
-	}
-
-	// Check if email is already taken
-	const existingUser = await prisma.pengguna.findUnique({
-		where: {
-			email: email,
-		},
-	});
-
-	if (existingUser) {
-		throw new Error("Email already taken");
-	}
-
-	// Hash password
-
-	// Create new user
-	const user = await prisma.pengguna.create({
-		data: {
-			nama: name,
-			email: email,
-			kata_sandi: password,
-		},
-	});
-
-	return user;
+	return (
+		<div>
+			<input
+				defaultValue={"Hello"}
+				onChange={(e) => {
+					setText(e.target.value);
+				}}
+				className="text-black"
+			/>
+			<input
+				type="text"
+				onChange={(e) => {
+					setCount(e.target.value);
+				}}
+			/>
+			<p>Actual value: {text}</p>
+			<p>Debounce value: {value}</p>
+			<p>Actual value: {count}</p>
+			<p>Debounce value: {counts}</p>
+		</div>
+	);
 }
